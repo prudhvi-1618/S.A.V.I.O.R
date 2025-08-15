@@ -155,7 +155,7 @@ class Dictionary(BaseModel):
 
 structured_llm = llm.with_structured_output(Dictionary)
 
-def get_model_data(word,target_language):
+def get_model_data(word,target_language="Telugu"):
 
     structure_prompt = PromptTemplate.from_template("""
         Create a comprehensive structured dictionary entry for the word "{word}" based on this information:
