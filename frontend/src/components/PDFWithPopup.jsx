@@ -1,11 +1,101 @@
 import React, { useState, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { Menu, Minus, Plus, RotateCcw, Undo2, Redo2, Download, Printer, PenLine, Image } from "lucide-react";
+import { Menu, Minus, Plus, RotateCcw, Undo2, Redo2, Download, Printer, PenLine,  X,
+  Volume2,
+  ClipboardCopy,
+  ChevronDown,
+  ChevronUp,
+  Search, } from "lucide-react";
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+const data = {
+  "antonyms": [
+    "Swarga",
+    "Narakam"
+  ],
+  "definition": [
+    {
+      "contextual_meaning": "It is often given to individuals born under a specific star or with a particular destiny",
+      "meaning": "A given name of Telugu origin",
+      "part_of_speech": [
+        "Proper Noun"
+      ]
+    },
+    {
+      "contextual_meaning": "This usage is less common and typically found in literary or poetic language",
+      "meaning": "A term used in some contexts to refer to the Earth or the world",
+      "part_of_speech": [
+        "Common Noun"
+      ]
+    }
+  ],
+  "etymology": "The word 'Prudhvi' is derived from the Sanskrit word 'पृथ्वी' (Prithvi), meaning 'the Earth' or 'the world'. It has been adapted into Telugu as 'పృధ్వి' (Prudhvi).",
+  "example_sentences": [
+    "Prudhvi is a popular name among Telugu-speaking people.",
+    "The word Prudhvi can also be used to refer to the Earth in a poetic sense."
+  ],
+  "pronunciation": {
+    "phonetic": "/prʊdʰviː/"
+  },
+  "related_words": [
+    {
+      "description": "The Sanskrit word from which 'Prudhvi' is derived.",
+      "relation": "Etymological origin",
+      "translation": {
+        "contextual_sentence": "పృథ్వి అనేది సంస్కృత పదం.",
+        "cultural_note": "The cultural significance of 'Prithvi' is profound, as it represents the Earth and is often personified as a goddess.",
+        "language": "Telugu",
+        "part_of_speech": [
+          "Proper Noun"
+        ],
+        "pronunciation": {
+          "phonetic": "/prɪtʰʋiː/"
+        },
+        "translated_word": "పృథ్వి"
+      },
+      "word": "Prithvi"
+    },
+    {
+      "description": "A term used to refer to the Earth or land.",
+      "relation": "Synonym",
+      "translation": {
+        "contextual_sentence": "భూమి అనేది మన గ్రహం.",
+        "cultural_note": "In many Indian languages, 'Bhumi' is used as a synonym for 'Prudhvi', emphasizing the earthy or terrestrial aspect.",
+        "language": "Telugu",
+        "part_of_speech": [
+          "Common Noun"
+        ],
+        "pronunciation": {
+          "phonetic": "/bʰuːmiː/"
+        },
+        "translated_word": "భూమి"
+      },
+      "word": "Bhumi"
+    }
+  ],
+  "synonyms": [
+    "Bhumi",
+    "Dharani",
+    "Vasundhara"
+  ],
+  "translation": {
+    "contextual_sentence": "పృధ్వి అనేది తెలుగు పేరు.",
+    "cultural_note": "In Telugu culture, names often have deep meanings and are chosen based on their significance and the characteristics they are believed to impart to the bearer.",
+    "language": "Telugu",
+    "part_of_speech": [
+      "Proper Noun",
+      "Common Noun"
+    ],
+    "pronunciation": {
+      "phonetic": "/prʊdʰviː/"
+    },
+    "translated_word": "పృధ్వి"
+  }
+}
 
 const PDFWithPopup = ({ file }) => {
   const containerRef = useRef(null);
@@ -16,12 +106,35 @@ const PDFWithPopup = ({ file }) => {
   const zoomIn = () => setScale((prev) => Math.min(prev + 0.2, 3));
   const zoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.5));
   const fitPage = () => setScale(1.2);
+  
+  const [showDetails, setShowDetails] = useState(false);
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard!');
+  };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
 
   const handleDoubleClick = (pageNumber) => (e) => {
+
+    const textSpan = e.target.closest(".textLayer span");
+    if (!textSpan) {
+      setPopup(null);
+      return;
+    }
+
+    // const selectedText = textSpan.textContent.trim();
+     const selectedText = window.getSelection().toString().trim();
+    if (!selectedText) return; 
+    if (!selectedText) {
+      setPopup(null);
+      return;
+    }
+    console.log(selectedText);
+
     const container = containerRef.current;
     if (!container) return;
 
@@ -112,7 +225,7 @@ const PDFWithPopup = ({ file }) => {
             <div
               key={i}
               onDoubleClick={handleDoubleClick(i + 1)}
-              className="mb-4 mx-auto shadow w-fit cursor-pointer"
+              className="mb-4 mx-auto shadow w-fit"
             >
               <Page pageNumber={i + 1} scale={scale} />
             </div>
@@ -122,22 +235,110 @@ const PDFWithPopup = ({ file }) => {
         {/* Popup */}
         {popup && (
           <div
-            className="absolute z-50 bg-white border border-gray-400 shadow-lg rounded-md p-3 w-64"
-            style={{ left: popup.x, top: popup.y }}
+      className="absolute z-50 bg-white border border-gray-300 shadow-xl rounded-lg p-4 w-[30vw]"
+      style={{ left: popup.x, top: popup.y }}
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center border-b pb-2 ">
+        <div className='relative flex gap-1'>
+          <h4 className="text-3xl font-semibold text-gray-800">Prudhvi</h4>
+          <p className="relative top-5 text-xs text-gray-500 capitalize">{data.definition[0].part_of_speech}</p>
+        </div>
+        <div className='flex gap-4'>
+           <button
+            onClick={() => copyToClipboard(data.definition.meaning)}
+            className="flex items-center text-xl text-zinc-700 hover:text-zinc-800 cursor-pointer"
           >
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="text-sm font-semibold text-gray-700">PDF Action</h4>
-              <button
-                onClick={() => setPopup(null)}
-                className="text-xs text-gray-500 hover:text-gray-800"
-              >
-                ✕
-              </button>
-            </div>
-            <p className="text-sm text-gray-600">
-              Double-clicked on page {popup.pageNumber}
-            </p>
+            <ClipboardCopy size={16} className="mr-1" />
+          </button>
+          <button
+            onClick={() => setPopup(null)}
+            className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Info */}
+      <div className="text-sm text-gray-700 space-y-2">
+        <div>
+          <strong>Definition:</strong> {data.definition[0].meaning}
+        </div>
+
+        <div>
+          <strong>Context:</strong> {data.definition[0].contextual_meaning}
+        </div>
+
+        <div className="flex items-center">
+          <strong>Pronunciation:</strong>&nbsp;{data.pronunciation.phonetic}
+          <button
+            // onClick={() => playAudio(data.interactive_elements.audio_button.url)}
+            className="ml-2 text-blue-500 hover:text-blue-700"
+            aria-label="Play pronunciation"
+          >
+            <Volume2 size={16} />
+          </button>
+        </div>
+
+        <div className="flex items-center">
+          <strong>Telugu:</strong>&nbsp;
+          {data.translation.translated_word} ({data.translation.pronunciation.phonetic})
+          <button
+            // onClick={() => playAudio(data.interactive_elements.translation_audio_button.url)}
+            className="ml-2 text-blue-500 hover:text-blue-700"
+            aria-label="Play Telugu pronunciation"
+          >
+            <Volume2 size={16} />
+          </button>
+        </div>
+
+        <div>
+          <strong>Telugu Sentence:</strong> {data.translation.contextual_sentence}
+        </div>
+      </div>
+
+      {/* Toggle Details */}
+      <button
+        onClick={() => setShowDetails(!showDetails)}
+        className="w-full mt-3 flex justify-end items-center text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer"
+      >
+        <span className="ml-1">{showDetails ? 'Hide Details' : 'Show More Details'}</span>
+         {showDetails ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
+
+      {/* Expanded Details */}
+      {showDetails && (
+        <div className="mt-3 text-sm text-gray-700 space-y-2 border-t pt-3">
+          <div>
+            <strong>Etymology:</strong> {data.etymology}
           </div>
+
+          <div>
+            <strong>Synonyms:</strong> {data.synonyms.join(', ')}
+          </div>
+
+          <div>
+            <strong>Antonyms:</strong> {data.antonyms.join(', ')}
+          </div>
+
+          <div>
+            <strong>Examples:</strong>
+            <ul className="list-disc list-inside text-gray-600">
+              {data.example_sentences.map((sentence, index) => (
+                <li key={index}>{sentence}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <strong>Related Word:</strong> {data.related_words[0].word}
+          </div>
+        </div>
+      )}
+
+    </div>
         )}
       </div>
     </div>
