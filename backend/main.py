@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from model.schema import get_model_data
 import json
 
 app = Flask(__name__)
+
+origins = ["http://localhost:5173"]
+CORS(app,origins=origins)
 
 @app.route('/dict/')
 def get_word():
