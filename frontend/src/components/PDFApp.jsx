@@ -17,7 +17,7 @@ const PDFApp = () => {
         className="block border border-gray-300 p-2 rounded"
       />
 
-      {file && <PDFWithPopup file={file} />}
+      {file && <PDFWithPopup file={file} handleFileChange={handleFileChange}/>}
     </div>
   );
 };
