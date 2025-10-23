@@ -17,7 +17,7 @@ const PDFWithPopup = ({ file, handleFileChange }) => {
   const [data, setData] = useState({});
   const [selectedWord, setSelectedWord] = useState(null);
   const [targeted_language, setTargeted_language] = useState("Telugu");
-  const [selectedApi, setSelectedApi] = useState("Groq"); 
+  const [selectedApi, setSelectedApi] = useState("llama"); 
 
   const containerRef = useRef(null);
   const [popup, setPopup] = useState(null);
@@ -246,10 +246,10 @@ const PDFWithPopup = ({ file, handleFileChange }) => {
                           }}
                           className="bg-gray-100 border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-1.5"
                         >
-                          <option value="Groq">Groq</option>
-                          <option value="Gemini">Gemini</option>
-                          <option value="OpenAI">OpenAI</option>
-                          <option value="DeepSeek">DeepSeek</option>
+                          <option value="llama">llama</option>
+                          <option value="gemini">Gemini</option>
+                          <option value="openAI">OpenAI</option>
+                          {/* <option value="DeepSeek">DeepSeek</option> */}
                         </select>
 
                         <button

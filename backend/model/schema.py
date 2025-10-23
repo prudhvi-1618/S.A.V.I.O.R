@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
-llm = ChatGroq(model="llama-3.3-70b-versatile")
-
 class Definition(BaseModel):
     """Individual definition entry for a word with grammatical context."""
     part_of_speech: List[str] = Field(
@@ -153,9 +150,19 @@ class Dictionary(BaseModel):
     #         }
     #     }
 
-structured_llm = llm.with_structured_output(Dictionary)
 
-def get_model_data(word,target_language="Telugu"):
+def get_model_data(word,target_language="Telugu",api_provider="llama"):
+
+    match api_provider:
+        case "gemini":
+            llm = ChatGroq(model="qwen/qwen3-32b")
+        case "openAI":
+            llm = ChatGroq(model="openai/gpt-oss-20b")
+        case _:
+            llm = ChatGroq(model="llama-3.3-70b-versatile")
+    
+
+    structured_llm = llm.with_structured_output(Dictionary)
 
     structure_prompt = PromptTemplate.from_template("""
         Create a comprehensive structured dictionary entry for the word "{word}" based on this information:

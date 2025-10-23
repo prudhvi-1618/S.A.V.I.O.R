@@ -13,13 +13,15 @@ CORS(app,origins=origins)
 def get_word():
     word = request.args.get('word')
     targeted_language = request.args.get('targeted_language') or "Telugu"
+    api_provider = request.args.get('api_provider') or ""
 
     if not word:
         return jsonify({'error': 'Missing "word" or "targeted_language" query parameter'}), 400
 
     response = get_model_data(
         word=word,
-        target_language=targeted_language
+        target_language=targeted_language,
+        api_provider=api_provider
     )
     json_output = response.model_dump_json(indent=2)
     parsed_data = json.loads(json_output)
